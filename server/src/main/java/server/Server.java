@@ -7,8 +7,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Server {
+    private static final Logger logger = Logger.getLogger(Server.class.getName());
     private List<ClientHandler> clients;
     private AuthService authService;
 
@@ -22,6 +25,7 @@ public class Server {
 //        authService = new SimpleAuthService();
         //==============//
         if (!SQLHandler.connect()) {
+            logger.log(Level.INFO, "Не удалось подключиться к БД");
             throw new RuntimeException("Не удалось подключиться к БД");
         }
         authService = new DBAuthServise();
@@ -29,10 +33,12 @@ public class Server {
 
         try {
             server = new ServerSocket(PORT);
+            logger.log(Level.INFO, "Сервер запущен");
             System.out.println("Сервер запущен");
 
             while (true) {
                 socket = server.accept();
+                logger.log(Level.INFO, "Клиент подключился");
                 System.out.println("Клиент подключился");
 
                 new ClientHandler(this, socket);
